@@ -3,12 +3,14 @@ import { database } from "../config/fb";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { AntDesign } from "@expo/vector-icons";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { EvilIcons } from "@expo/vector-icons";
+import { Foundation } from "@expo/vector-icons";
 
-export default function Product({ id, emoji, name, category, price, isSold }) {
+export default function Product({ id, name, category, content, isLiked }) {
   const onEdit = () => {
     const docRef = doc(database, "products", id);
     updateDoc(docRef, {
-      isSold: true,
+      isLiked: !isLiked,
     });
   };
   const onDelete = () => {
@@ -17,10 +19,9 @@ export default function Product({ id, emoji, name, category, price, isSold }) {
   };
   return (
     <View style={styles.productContainer}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={styles.emoji}>{emoji}</Text>
+      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
         <AntDesign
-          style={{ color: "red" }}
+          style={{ color: "purple" }}
           onPress={onDelete}
           name="delete"
           size={24}
@@ -28,20 +29,29 @@ export default function Product({ id, emoji, name, category, price, isSold }) {
       </View>
       <Text style={styles.name}>{name}</Text>
       <Text style={styles.category}>{category}</Text>
-      <Text style={styles.price}>${price}</Text>
-      {isSold ? (
-        <TouchableOpacity style={[styles.button, { backgroundColor: "gray" }]}>
-          <Text style={styles.buttonText}>Sold</Text>
+      <Text style={styles.price}>{content}</Text>
+      {isLiked ? (
+        <TouchableOpacity onPress={onEdit}>
+          <Foundation
+            style={{ color: "purple", marginRight: 15 }}
+            size={30}
+            name="like"
+            onPress=""
+          />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity onPress={onEdit} style={styles.button}>
-          <Text style={styles.buttonText}>Purchase</Text>
+        <TouchableOpacity onPress={onEdit}>
+          <EvilIcons
+            style={{ color: "purple", marginRight: 15 }}
+            size={30}
+            name="like"
+            onPress=""
+          />
         </TouchableOpacity>
       )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   productContainer: {
     padding: 16,
@@ -62,7 +72,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   button: {
-    backgroundColor: "#0FA5E9",
+    backgroundColor: "#460B73",
     padding: 10,
     marginVertical: 6,
     borderRadius: 8,

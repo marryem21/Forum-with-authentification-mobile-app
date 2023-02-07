@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import Constants from "expo-constants";
+import app from "firebase/compat/app";
+
+import "firebase/compat/auth";
+import "firebase/compat/database";
+import "firebase/compat/storage";
 
 const firebaseConfig = {
   apiKey: Constants.manifest.extra.apiKey,
@@ -15,3 +20,6 @@ const firebaseConfig = {
 // Initialize Firebase
 initializeApp(firebaseConfig);
 export const database = getFirestore();
+
+export const initfirebase = app.initializeApp(firebaseConfig);
+export default initfirebase;

@@ -1,8 +1,13 @@
 import * as React from "react";
-import * as RN from "react-native";
 import { database } from "../config/fb";
 import { collection, addDoc } from "firebase/firestore";
-import { TextInput, Text, Button, View } from "react-native";
+import {
+  TextInput,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useState } from "react";
@@ -11,22 +16,14 @@ export default function Add() {
   const navigation = useNavigation();
   const [selected, setSelected] = useState("");
   const data = [
-    {
-      key: "1",
-      value: "Emotions",
-    },
-    { key: "2", value: "Jobs" },
-    { key: "3", value: "Aliens" },
-    { key: "4", value: "Objects" },
-    { key: "5", value: "Flags" },
-    { key: "6", value: "Buildings" },
-    { key: "7", value: "Humans" },
+    { key: "1", value: "Politics" },
+    { key: "2", value: "Cooking" },
+    { key: "3", value: "pop" },
   ];
   const [newItem, setNewItem] = React.useState({
-    emoji: "👽",
     name: "",
     category: "",
-    price: "",
+    content: "",
     isSold: false,
     createdAt: new Date(),
   });
@@ -34,29 +31,21 @@ export default function Add() {
     await addDoc(collection(database, "products"), newItem);
     navigation.goBack();
   };
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sell a new product</Text>
-      <Text style={styles.emoji}>{newItem.emoji}</Text>
+      <Text style={styles.title}>Tweet about this subject</Text>
       <TextInput
         style={styles.inputContainer}
         keyboardType="default"
-        placeholder="enter your product emoji"
-        onChangeText={(e) => setNewItem({ ...newItem, emoji: e })}
-      ></TextInput>
-      <TextInput
-        style={styles.inputContainer}
-        keyboardType="default"
-        placeholder="enter your product name"
+        placeholder="enter your tweet title"
         onChangeText={(e) => setNewItem({ ...newItem, name: e })}
       ></TextInput>
 
       <TextInput
         style={styles.inputContainer}
-        keyboardType="number-pad"
-        placeholder="$ price"
-        onChangeText={(e) => setNewItem({ ...newItem, price: e })}
+        keyboardType="default"
+        placeholder="content"
+        onChangeText={(e) => setNewItem({ ...newItem, content: e })}
       ></TextInput>
       <SelectList
         data={data}
@@ -66,15 +55,28 @@ export default function Add() {
           paddingHorizontal: 125,
         }}
         dropdownItemStyles={{ padding: 15 }}
-        placeholder="Select your emoji's category "
+        placeholder="Select your tweet's category "
         setSelected={setSelected}
+        save="value"
       />
-      <Button title="Publish" onPress={onSend} />
+      <TouchableOpacity
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: 25,
+        }}
+      >
+        <Text style={styles.button} onPress={onSend}>
+          Submit
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-const styles = RN.StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -91,12 +93,13 @@ const styles = RN.StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
   },
-  emoji: {
-    fontSize: 100,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 6,
-    padding: 10,
-    marginVertical: 6,
+  button: {
+    color: "#FFF",
+    fontSize: 18,
+    backgroundColor: "#460B73",
+    borderRadius: 15,
+    textAlign: "center",
+    width: 200,
+    padding: 15,
   },
 });

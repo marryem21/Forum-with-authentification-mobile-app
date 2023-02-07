@@ -3,20 +3,18 @@ import { useNavigation } from "@react-navigation/native";
 import { database } from "../config/fb";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import Product from "../components/Product";
-import { useEffect, useState, useLayoutEffect } from "react";
-import { Text, View, StyleSheet, Button, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableHighlight,
+} from "react-native";
 
 export default function Home() {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button title="Add" onPress={() => navigation.navigate("Add")} />
-      ),
-    });
-  }, []);
 
   useEffect(() => {
     const collectionRef = collection(database, "products");
@@ -25,21 +23,39 @@ export default function Home() {
       setProducts(
         querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          emoji: doc.data().emoji,
           name: doc.data().name,
           category: doc.data().category,
-          price: doc.data().price,
-          isSold: doc.data().isSold,
+          isLiked: doc.data().isLiked,
           createdAt: doc.data().createdAt,
+          content: doc.data().content,
         }))
       );
     });
     return unsubscribe;
   }, []);
+
   return (
     <>
+      <TouchableHighlight
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: 25,
+        }}
+      >
+        <Text
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate("Add");
+          }}
+        >
+          Add tweet
+        </Text>
+      </TouchableHighlight>
       <View style={styles.container}>
-        <Text style={styles.title}>Products</Text>
+        <Text style={styles.title}>Tweets</Text>
         <FlatList
           style={{ width: "100%" }}
           data={products}
@@ -61,5 +77,14 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     margin: 16,
+  },
+  button: {
+    width: 200,
+    padding: 15,
+    color: "#FFF",
+    fontSize: 24,
+    backgroundColor: "#460B73",
+    borderRadius: 15,
+    textAlign: "center",
   },
 });
